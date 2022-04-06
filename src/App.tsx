@@ -1,11 +1,12 @@
-import { useState } from "react";
-import "./App.css";
-
 import { invoke } from "@tauri-apps/api";
+import { Link, useParams } from "react-router-dom";
 
-function App() {
-	const [count, setCount] = useState(0);
+type AppProps = {
+	page: "home" | "database";
+};
 
+function App({ page }: AppProps) {
+	const { databaseId } = useParams();
 	async function getSchemas() {
 		let data = await invoke("get_schemas");
 
@@ -13,8 +14,16 @@ function App() {
 	}
 
 	return (
-		<div className="App">
+		<div>
+			<p>Page: {page}</p>
+			{databaseId && <div>Database: {databaseId}</div>}
 			<button onClick={getSchemas}>Get Schemas</button>
+			<br />
+			<br />
+			<br />
+			<Link to={`/mysql-2`}>Goto Database</Link>
+			<br />
+			<Link to={`/`}>Goto Home</Link>
 		</div>
 	);
 }

@@ -1,6 +1,8 @@
-use sqlx::{mysql::MySqlPoolOptions, MySql, Pool, Row};
+use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
 
-struct Connection {
+mod db;
+
+pub struct Connection {
     pool: Pool<MySql>,
 }
 
@@ -14,27 +16,7 @@ async fn main() {
 
     tauri::Builder::default()
         .manage(Connection { pool })
-        .invoke_handler(tauri::generate_handler![get_schemas])
+        .invoke_handler(tauri::generate_handler![db::get_schemas])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-}
-
-#[derive(sqlx::FromRow)]
-struct SchemaQuery {
-    Database: String,
-}
-
-#[tauri::command]
-async fn get_schemas(state: tauri::State<'_, Connection>) -> Result<Vec<String>, String> {
-    let schemas = sqlx::query_as::<_, SchemaQuery>("SHOW SCHEMAS")
-        .fetch_all(&state.pool)
-        .await
-        .map_err(|e| e.to_string())?;
-
-    let result: Vec<String> = schemas
-        .iter()
-        .map(|schema| schema.Database.clone())
-        .collect();
-
-    Ok(result)
 }
