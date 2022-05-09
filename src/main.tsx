@@ -1,15 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import App from "./App";
+import { DatabaseView, HomeView, CreateNewView } from "./views";
 
 ReactDOM.render(
 	<React.StrictMode>
 		<BrowserRouter>
 			<Routes>
-				<Route path="/" element={<App page="home" />}>
-					<Route path=":databaseId" element={<App page="database" />} />
-				</Route>
+				<Route path="/" element={<HomeView />} />
+				<Route path="/database/:databaseId" element={<DatabaseView />} />
+				<Route path="/createNew" element={<CreateNewView />} />
 			</Routes>
 		</BrowserRouter>
 	</React.StrictMode>,
